@@ -1,0 +1,21 @@
+FROM $USER/lamp:$UBUNTU-$PHP
+LABEL maintainer="Thomas Nilefalk <thomas@nilefalk.se>"
+
+# 
+RUN set -ex; \
+	chown -R www-data:www-data /var/www/html
+
+VOLUME restore
+
+# Copy UNiTE package which needs to exist in current directory 
+COPY unite-package-*.zip /tmp
+COPY unite.xml /var/www/html
+COPY unite.json /var/www/html
+
+# Copy init scripts
+COPY entrypoint.sh /entrypoint.sh
+RUN \
+    chmod 755 /entrypoint.sh
+COPY makedb.php /makedb.php
+
+ENTRYPOINT ["/entrypoint.sh", "$PHP"]
