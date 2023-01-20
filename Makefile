@@ -1,6 +1,6 @@
 USER = thoni56
 UBUNTU = jammy
-PHP = 8.0
+PHP = 8.1
 
 all:
 	test -f unite-package*.zip
