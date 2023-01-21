@@ -5,6 +5,7 @@ PHP = 8.1
 all:
 	test -f unite-package*.zip
 	UBUNTU=$(UBUNTU) PHP=$(PHP) envsubst '$$UBUNTU $$PHP $$USER' < Dockerfile.template > Dockerfile
+	envsubst < unite.xml.template > unite.xml
 	docker build -t $(USER)/joomla-unite:$(UBUNTU)-$(PHP) .
 	@echo "Build done."
 
