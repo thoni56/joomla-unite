@@ -40,9 +40,13 @@ php$PHP /makedb.php "$JOOMLA_DB_HOST" "$JOOMLA_DB_USER" "$JOOMLA_DB_PASSWORD" "$
 # Set up UNiTE executable
 unzip /tmp/unite-package*
 chmod a+x unite.phar
+mv unite.phar unite
 
 # Restore the site using the unite configuration
-php$PHP unite.phar restore unite.xml
+./unite unite.xml
+
+rm index.html
+chown -R www-data:www-data .
 
 a2enmod ssl
 a2enconf ssl
