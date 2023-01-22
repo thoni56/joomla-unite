@@ -1,6 +1,4 @@
 #!/bin/bash
-PHP=$1
-
 uid="$(id -u)"
 gid="$(id -g)"
 
@@ -35,7 +33,7 @@ service mysql start
 service mariadb start
 
 # Ensure the MySQL Database is created
-php$PHP /makedb.php "$JOOMLA_DB_HOST" "$JOOMLA_DB_USER" "$JOOMLA_DB_PASSWORD" "$JOOMLA_DB_NAME"
+php /makedb.php "$JOOMLA_DB_HOST" "$JOOMLA_DB_USER" "$JOOMLA_DB_PASSWORD" "$JOOMLA_DB_NAME"
 
 # Set up UNiTE executable
 unzip /tmp/unite-package*
@@ -43,10 +41,13 @@ chmod a+x unite.phar
 mv unite.phar unite
 
 # Restore the site using the unite configuration
-./unite unite.xml
+./unite unite.xml --verbose
 
 rm index.html
 chown -R www-data:www-data .
+
+# Trix to ease J4 migration
+grep 'behavior.caption' -lR . | xargs sed -i '/behavior.caption/d'
 
 a2enmod ssl
 a2enconf ssl
