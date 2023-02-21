@@ -2,7 +2,7 @@
 #
 # This script fixes up paths and URLs in a CiviCRM installation
 # Typically you need this when restoring a copy of an existing installation
-#
+# The script is tuned to an installation in a docker so
 # OLD_PATH and OLD_HOST need to be defined when running this script
 #
 ok=true
@@ -34,7 +34,7 @@ sed -i $path_replacement administrator/components/com_civicrm/civicrm.settings.p
 sed -i.bak $path_replacement administrator/components/com_civicrm/civicrm/civicrm.config.php
 
 # TODO We could figure out old host from any of the configuration files
-# TODO Is there a way we could get the PORT number (when it needs to be used)
+# TODO Is there a way we could get the PORT number (when it needs to be used with localhost)
 url_replacement="s%$OLD_HOST%localhost%"
 sed -i $url_replacement components/com_civicrm/civicrm.settings.php
 sed -i $url_replacement administrator/components/com_civicrm/civicrm.settings.php

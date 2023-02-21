@@ -32,7 +32,7 @@ JOOMLA_DB_NAME='joomla'
 service mysql start
 service mariadb start
 
-if ! -d administrator ; then
+if [ ! -d administrator ] ; then
 
     # If there is no administrator directory then we should use UNiTE to get the installation
 
