@@ -13,6 +13,7 @@ COPY unite.xml /var/www/html
 COPY unite.json /var/www/html
 
 # Copy init scripts
+COPY civicrm-fix /var/www/html
 COPY entrypoint.sh /entrypoint.sh
 RUN \
     chmod 755 /entrypoint.sh

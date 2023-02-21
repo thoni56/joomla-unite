@@ -5,7 +5,7 @@
     <deletePackage>1</deletePackage>
     <localLog>test.log</localLog>
     <emailSysop>0</emailSysop>
-    <name>Local Copy of Responsive.se</name>
+    <name>Local Copy of Events</name>
     <email>info@responsive.se</email>
     <absolutepath>/var/www/html</absolutepath>
     <force_ssl>0</force_ssl>
@@ -13,8 +13,8 @@
   </siteInfo>
 
   <remote>
-    <host>https://responsive.se</host>
-    <secret>JJFOZv3ngUnyMpW_qgRq5LLDdqr50jzz</secret>
+    <host>https://events.responsive.se</host>
+    <secret>GenerateASecretWordForEventsBackup8472!</secret>
     <component>com_akeeba</component>
     <downloadmode>chunk</downloadmode>
     <delete>1</delete>

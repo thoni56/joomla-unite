@@ -1,0 +1,40 @@
+#! /bin/bash
+#
+# This script fixes up paths and URLs in a CiviCRM installation
+# Typically you need this when restoring a copy of an existing installation
+#
+# OLD_PATH and OLD_HOST need to be defined when running this script
+#
+ok=true
+if [ -z ${OLD_PATH+x} ]; then
+  ok=false
+  echo "OLD_PATH is not defined (the path to the old installation directory)"
+fi
+if [ -z ${OLD_HOST+x} ]; then
+  ok=false
+  echo "OLD_HOST is not defined (the host part of URL to the original site, without 'https://')"
+fi
+if [ "$ok" == "false" ]; then
+    exit 1
+fi
+
+if [ ! -d components ]; then
+    echo "You need to run this from the root of your Joomla installation"
+    exit 1
+fi
+
+db_replacement="s%mysql://[^:]*:[^@]*@[^/]*/[^?]*%mysql://joomla:joomla@localhost/joomla%"
+sed -i.bak $db_replacement components/com_civicrm/civicrm.settings.php
+sed -i.bak $db_replacement administrator/components/com_civicrm/civicrm.settings.php
+
+# TODO We could figure out old path from any of the configuration files
+path_replacement="s%$OLD_PATH%/var/www/html%"
+sed -i $path_replacement components/com_civicrm/civicrm.settings.php
+sed -i $path_replacement administrator/components/com_civicrm/civicrm.settings.php
+sed -i.bak $path_replacement administrator/components/com_civicrm/civicrm/civicrm.config.php
+
+# TODO We could figure out old host from any of the configuration files
+# TODO Is there a way we could get the PORT number (when it needs to be used)
+url_replacement="s%$OLD_HOST%localhost%"
+sed -i $url_replacement components/com_civicrm/civicrm.settings.php
+sed -i $url_replacement administrator/components/com_civicrm/civicrm.settings.php

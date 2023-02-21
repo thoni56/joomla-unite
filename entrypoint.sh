@@ -32,39 +32,69 @@ JOOMLA_DB_NAME='joomla'
 service mysql start
 service mariadb start
 
-# Ensure the MySQL Database is created
-php /makedb.php "$JOOMLA_DB_HOST" "$JOOMLA_DB_USER" "$JOOMLA_DB_PASSWORD" "$JOOMLA_DB_NAME"
+if ! -d administrator ; then
 
-# Set up UNiTE executable
-unzip /tmp/unite-package*
-chmod a+x unite.phar
-mv unite.phar unite
+    # If there is no administrator directory then we should use UNiTE to get the installation
 
-# Restore the site using the unite configuration
-./unite unite.xml --verbose
+    # Ensure the MySQL Database is created
+    php /makedb.php "$JOOMLA_DB_HOST" "$JOOMLA_DB_USER" "$JOOMLA_DB_PASSWORD" "$JOOMLA_DB_NAME"
 
-rm index.html
-chown -R www-data:www-data .
+    # Ensure timezone data is loaded
+    mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root mysql
 
-# Trix to ease J4 migration
-grep 'behavior.caption' -lR . | xargs sed -i '/behavior.caption/d'
+    # Set up UNiTE executable
+    unzip /tmp/unite-package*
+    chmod a+x unite.phar
+    mv unite.phar unite
 
-a2enmod ssl
-a2enconf ssl
-./generate_certs.sh
+    # Restore the site using the unite configuration
+    ./unite unite.xml --verbose
+
+    rm index.html
+    chown -R www-data:www-data .
+
+    # Trix to ease J4 migration
+    grep 'behavior.caption' -lR . | xargs sed -i '/behavior.caption/d'
+
+    echo >&2 "========================================================================"
+    echo >&2
+    echo >&2 "Joomla UNiTE has restored your site $SITE into this container"
+    echo >&2
+    echo >&2 "Navigate to this containers http://localhost:{mapped_port}"
+    echo >&2
+    echo >&2 "JOOMLA_DB_HOST='$JOOMLA_DB_HOST'"
+    echo >&2 "JOOMLA_DB_USER='$JOOMLA_DB_USER'"
+    echo >&2 "JOOMLA_DB_PASSWORD='$JOOMLA_DB_PASSWORD'"
+    echo >&2 "JOOMLA_DB_NAME='$JOOMLA_DB_NAME'"
+    echo >&2
+    echo >&2 "If you have CiviCRM installed you need to run the script 'civicrm-fix'"
+    echo >&2 "before using the new installation:"
+    echo >&2
+    echo >&2 "    OLD_PATH=/var/www/something OLD_HOST=my.site.com ./civicrm-fix"
+    echo >&2
+    echo >&2 "========================================================================"
+
+    a2enmod ssl
+    a2enconf ssl
+    ./generate_certs.sh
+
+else
+
+    echo >&2 "========================================================================"
+    echo >&2
+    echo >&2 "There is already a Joomla site ($SITE) in this container"
+    echo >&2
+    echo >&2 "Navigate to this containers http://localhost:{mapped_port}"
+    echo >&2
+    echo >&2 "JOOMLA_DB_HOST='$JOOMLA_DB_HOST'"
+    echo >&2 "JOOMLA_DB_USER='$JOOMLA_DB_USER'"
+    echo >&2 "JOOMLA_DB_PASSWORD='$JOOMLA_DB_PASSWORD'"
+    echo >&2 "JOOMLA_DB_NAME='$JOOMLA_DB_NAME'"
+    echo >&2
+    echo >&2 "========================================================================"
+
+fi
+
 service apache2 start
-
-echo >&2 "========================================================================"
-echo >&2
-echo >&2 "Joomla UNiTE has restored your site $SITE into this container"
-echo >&2
-echo >&2 "Navigate to this containers http://localhost:{mapped_port}"
-echo >&2
-echo >&2 "JOOMLA_DB_HOST='$JOOMLA_DB_HOST'"
-echo >&2 "JOOMLA_DB_USER='$JOOMLA_DB_USER'"
-echo >&2 "JOOMLA_DB_PASSWORD='$JOOMLA_DB_PASSWORD'"
-echo >&2 "JOOMLA_DB_NAME='$JOOMLA_DB_NAME'"
-echo >&2
-echo >&2 "========================================================================"
 
 tail -f /var/log/apache2/error.log -f /var/log/apache2/access.log

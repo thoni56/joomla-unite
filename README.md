@@ -1,2 +1,3 @@
 # joomla-unite
-Use Akeeba Unite to clone your website in a Docker container
+
+Use Akeeba UNiTE to clone your website in a Docker container with a LAMP-stack.
